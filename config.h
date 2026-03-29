@@ -136,6 +136,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_BackSpace,   spawn,            {.v = filecmd} },
 	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
+	{ MODKEY,                    XKB_KEY_m,           focusmaster,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_j,           movestack,        {.i = +1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_k,           movestack,        {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_m,           zoom,             {0} }, // Move current window to master
