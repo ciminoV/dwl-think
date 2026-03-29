@@ -6,7 +6,12 @@
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
+static const int smartgaps                 = 0;  /* 1 means no outer gap when there is only one window */
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const unsigned int gappih           = 5; /* horiz inner gap between windows */
+static const unsigned int gappiv           = 5; /* vert inner gap between windows */
+static const unsigned int gappoh           = 8; /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov           = 8; /* vert outer gap between windows and screen edge */
 static const float rootcolor[]             = COLOR(0x222222ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
 static const float focuscolor[]            = COLOR(0x005577ff);
@@ -136,40 +141,46 @@ static const char *mutemic[]			= { "/home/cimino/.local/bin/volume", "--toggle-m
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> quotedbl, etc. */
-	/* modifier                  key                  function          argument */
-	{ MODKEY,                    XKB_KEY_p,                     spawn,            {.v = menucmd} },
-	{ MODKEY,                    XKB_KEY_Return,                spawn,            {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_BackSpace,             spawn,            {.v = filecmd} },
-	{ MODKEY,                    XKB_KEY_j,                     focusstack,       {.i = +1} },
-	{ MODKEY,                    XKB_KEY_k,                     focusstack,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_m,                     focusmaster,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_j,                     movestack,        {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_k,                     movestack,        {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_m,                     zoom,             {0} }, // Swap current window and master
-	{ MODKEY,                    XKB_KEY_i,                     incnmaster,       {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,                     incnmaster,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_Left,                  rotatetags,       {.i = VIEW_L} },
-	{ MODKEY,                    XKB_KEY_Right,                 rotatetags,       {.i = VIEW_R} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Left,                  rotatetags,       {.i = SHIFT_L} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Right,                 rotatetags,       {.i = SHIFT_R} },
-	{ MODKEY,                    XKB_KEY_h,                     setmfact,         {.f = -0.05f} },
-	{ MODKEY,                    XKB_KEY_l,                     setmfact,         {.f = +0.05f} },
-	{ MODKEY,                    XKB_KEY_Tab,                   view,             {0} }, // Rotate through last two tags
-	{ MODKEY,                    XKB_KEY_q,                     killclient,       {0} },
-	{ MODKEY,                    XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_f,                     togglefloating,   {0} },
-	{ MODKEY,                    XKB_KEY_f,                     togglefullscreen, {0} },
-	{ MODKEY,                    XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
-	{ MODKEY,                    XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT} },
-	{ 0,                         XKB_KEY_XF86AudioRaiseVolume,  spawn,            {.v = volup} },
-	{ 0,                         XKB_KEY_XF86AudioLowerVolume,  spawn,            {.v = voldown} },
-	{ 0,                         XKB_KEY_XF86AudioMute,         spawn,            {.v = mute} },
-	{ 0,                         XKB_KEY_XF86AudioMicMute,      spawn,            {.v = mutemic} },
-	{ 0,                         XKB_KEY_XF86MonBrightnessUp,   spawn,            {.v = brightnessup} },
-	{ 0,                         XKB_KEY_XF86MonBrightnessDown, spawn,            {.v = brightnessdown} },
+	/* modifier                  		key                            function          argument */
+	{ MODKEY,                               XKB_KEY_p,                     spawn,            {.v = menucmd} },
+	{ MODKEY,                               XKB_KEY_Return,                spawn,            {.v = termcmd} },
+	{ MODKEY,                               XKB_KEY_BackSpace,             spawn,            {.v = filecmd} },
+	{ MODKEY,                               XKB_KEY_j,                     focusstack,       {.i = +1} },
+	{ MODKEY,                               XKB_KEY_k,                     focusstack,       {.i = -1} },
+	{ MODKEY,                               XKB_KEY_m,                     focusmaster,      {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_j,                     movestack,        {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_k,                     movestack,        {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_m,                     zoom,             {0} }, // Swap current window and master
+	{ MODKEY,                               XKB_KEY_i,                     incnmaster,       {.i = +1} },
+	{ MODKEY,                               XKB_KEY_d,                     incnmaster,       {.i = -1} },
+	{ MODKEY,                               XKB_KEY_Left,                  rotatetags,       {.i = VIEW_L} },
+	{ MODKEY,                               XKB_KEY_Right,                 rotatetags,       {.i = VIEW_R} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_Left,                  rotatetags,       {.i = SHIFT_L} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_Right,                 rotatetags,       {.i = SHIFT_R} },
+	{ MODKEY,                               XKB_KEY_h,                     setmfact,         {.f = -0.05f} },
+	{ MODKEY,                               XKB_KEY_l,                     setmfact,         {.f = +0.05f} },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   XKB_KEY_k,                     incogaps,         {.i = +1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   XKB_KEY_j,                     incogaps,         {.i = -1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   XKB_KEY_h,                     incigaps,         {.i = +1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   XKB_KEY_l,                     incigaps,         {.i = -1 } },
+	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   XKB_KEY_d,                     defaultgaps,      {0} },
+	{ MODKEY,                               XKB_KEY_Tab,                   view,             {0} }, // Rotate through last two tags
+	{ MODKEY,                               XKB_KEY_q,                     killclient,       {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_q,                     quit,             {0} },
+	{ MODKEY,                               XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_f,                     togglefloating,   {0} },
+	{ MODKEY,                               XKB_KEY_f,                     togglefullscreen, {0} },
+	{ MODKEY,                               XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
+	{ MODKEY,                               XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                               XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ 0,                                    XKB_KEY_XF86AudioRaiseVolume,  spawn,            {.v = volup} },
+	{ 0,                                    XKB_KEY_XF86AudioLowerVolume,  spawn,            {.v = voldown} },
+	{ 0,                                    XKB_KEY_XF86AudioMute,         spawn,            {.v = mute} },
+	{ 0,                                    XKB_KEY_XF86AudioMicMute,      spawn,            {.v = mutemic} },
+	{ 0,                                    XKB_KEY_XF86MonBrightnessUp,   spawn,            {.v = brightnessup} },
+	{ 0,                                    XKB_KEY_XF86MonBrightnessDown, spawn,            {.v = brightnessdown} },
 	TAGKEYS(          XKB_KEY_1,                XKB_KEY_exclam,                0),
 	TAGKEYS(          XKB_KEY_2,                XKB_KEY_quotedbl,              1),
 	TAGKEYS(          XKB_KEY_3,                XKB_KEY_sterling,              2),
@@ -179,7 +190,6 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_7,                XKB_KEY_slash,                 6),
 	TAGKEYS(          XKB_KEY_8,                XKB_KEY_parenleft,             7),
 	TAGKEYS(          XKB_KEY_9,                XKB_KEY_parenright,            8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_q,           quit,             {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
