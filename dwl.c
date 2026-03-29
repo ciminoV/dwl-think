@@ -310,6 +310,7 @@ static void keypress(struct wl_listener *listener, void *data);
 static void keypressmod(struct wl_listener *listener, void *data);
 static int keyrepeat(void *data);
 static void killclient(const Arg *arg);
+static void killallclient(const Arg *arg);
 static void locksession(struct wl_listener *listener, void *data);
 static void mapnotify(struct wl_listener *listener, void *data);
 static void maximizenotify(struct wl_listener *listener, void *data);
@@ -1832,6 +1833,17 @@ killclient(const Arg *arg)
 	if (sel)
 		client_send_close(sel);
 }
+
+void killallclient(const Arg *arg)
+{
+	Client *c;
+	wl_list_for_each(c, &clients, link)
+	{
+		if (VISIBLEON(c, selmon))
+			client_send_close(c);
+	}
+}
+
 
 void
 locksession(struct wl_listener *listener, void *data)
