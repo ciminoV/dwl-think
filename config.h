@@ -50,7 +50,7 @@ static const MonitorRule monrules[] = {
    /* name        mfact  nmaster scale layout       rotate/reflect                x    y
     * example of a HiDPI laptop monitor:
     { "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 }, */
-	{ "eDP-1",      0.55f, 1,      2, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+	{ "eDP-1",      0.55f, 1,      1.3, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	/* default monitor rule: can be changed but cannot be eliminated; at least one monitor rule must exist */
 };
@@ -124,40 +124,52 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
-static const char *filecmd[] = { "yazi", NULL };
-static const char *menucmd[] = { "wmenu-run", NULL };
+static const char *termcmd[] 			= { "foot", NULL };
+static const char *filecmd[] 			= { "yazi", NULL };
+static const char *menucmd[] 			= { "wmenu-run", NULL };
+static const char *brightnessup[]		= { "brightnessctl", "s", "10%+", NULL };
+static const char *brightnessdown[]	  	= { "brightnessctl", "s", "10%-", NULL };
+static const char *volup[]			= { "/home/cimino/.local/bin/volume", "--inc", NULL };
+static const char *voldown[]			= { "/home/cimino/.local/bin/volume", "--dec", NULL };
+static const char *mute[]			= { "/home/cimino/.local/bin/volume", "--toggle", NULL };
+static const char *mutemic[]			= { "/home/cimino/.local/bin/volume", "--toggle-mic", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> quotedbl, etc. */
 	/* modifier                  key                  function          argument */
-	{ MODKEY,                    XKB_KEY_p,           spawn,            {.v = menucmd} },
-	{ MODKEY,                    XKB_KEY_Return,      spawn,            {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_BackSpace,   spawn,            {.v = filecmd} },
-	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
-	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_m,           focusmaster,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_j,           movestack,        {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_k,           movestack,        {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_m,           zoom,             {0} }, // Move current window to master
-	{ MODKEY,                    XKB_KEY_i,           incnmaster,       {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,           incnmaster,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_Left,        rotatetags,       {.i = VIEW_L} },
-	{ MODKEY,                    XKB_KEY_Right,       rotatetags,       {.i = VIEW_R} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Left,        rotatetags,       {.i = SHIFT_L} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Right,       rotatetags,       {.i = SHIFT_R} },
-	{ MODKEY,                    XKB_KEY_h,           setmfact,         {.f = -0.05f} },
-	{ MODKEY,                    XKB_KEY_l,           setmfact,         {.f = +0.05f} },
-	{ MODKEY,                    XKB_KEY_Tab,         view,             {0} },
-	{ MODKEY,                    XKB_KEY_q,           killclient,       {0} },
-	{ MODKEY,                    XKB_KEY_t,           setlayout,        {.v = &layouts[0]} }, // Tile layout
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_f,           togglefloating,   {0} },
-	{ MODKEY,                    XKB_KEY_f,           togglefullscreen, {0} },
-	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} }, // Show all windows in current tag
-	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,     tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY,                    XKB_KEY_p,                     spawn,            {.v = menucmd} },
+	{ MODKEY,                    XKB_KEY_Return,                spawn,            {.v = termcmd} },
+	{ MODKEY,                    XKB_KEY_BackSpace,             spawn,            {.v = filecmd} },
+	{ MODKEY,                    XKB_KEY_j,                     focusstack,       {.i = +1} },
+	{ MODKEY,                    XKB_KEY_k,                     focusstack,       {.i = -1} },
+	{ MODKEY,                    XKB_KEY_m,                     focusmaster,      {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_j,                     movestack,        {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_k,                     movestack,        {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_m,                     zoom,             {0} }, // Swap current window and master
+	{ MODKEY,                    XKB_KEY_i,                     incnmaster,       {.i = +1} },
+	{ MODKEY,                    XKB_KEY_d,                     incnmaster,       {.i = -1} },
+	{ MODKEY,                    XKB_KEY_Left,                  rotatetags,       {.i = VIEW_L} },
+	{ MODKEY,                    XKB_KEY_Right,                 rotatetags,       {.i = VIEW_R} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Left,                  rotatetags,       {.i = SHIFT_L} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Right,                 rotatetags,       {.i = SHIFT_R} },
+	{ MODKEY,                    XKB_KEY_h,                     setmfact,         {.f = -0.05f} },
+	{ MODKEY,                    XKB_KEY_l,                     setmfact,         {.f = +0.05f} },
+	{ MODKEY,                    XKB_KEY_Tab,                   view,             {0} }, // Rotate through last two tags
+	{ MODKEY,                    XKB_KEY_q,                     killclient,       {0} },
+	{ MODKEY,                    XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_f,                     togglefloating,   {0} },
+	{ MODKEY,                    XKB_KEY_f,                     togglefullscreen, {0} },
+	{ MODKEY,                    XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
+	{ MODKEY,                    XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                    XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ 0,                         XKB_KEY_XF86AudioRaiseVolume,  spawn,            {.v = volup} },
+	{ 0,                         XKB_KEY_XF86AudioLowerVolume,  spawn,            {.v = voldown} },
+	{ 0,                         XKB_KEY_XF86AudioMute,         spawn,            {.v = mute} },
+	{ 0,                         XKB_KEY_XF86AudioMicMute,      spawn,            {.v = mutemic} },
+	{ 0,                         XKB_KEY_XF86MonBrightnessUp,   spawn,            {.v = brightnessup} },
+	{ 0,                         XKB_KEY_XF86MonBrightnessDown, spawn,            {.v = brightnessdown} },
 	TAGKEYS(          XKB_KEY_1,                XKB_KEY_exclam,                0),
 	TAGKEYS(          XKB_KEY_2,                XKB_KEY_quotedbl,              1),
 	TAGKEYS(          XKB_KEY_3,                XKB_KEY_sterling,              2),
