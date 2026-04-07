@@ -35,7 +35,9 @@ static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
-	{ "firefox",  NULL,       1 << 1,       0,           -1 },
+	{ "pavucontrol",      NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
+	{ "mpv",              NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
+	{ "firefox",          NULL,       1 << 1,       0,           -1 }, /* Start on only tag 2 */
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
@@ -55,8 +57,8 @@ static const MonitorRule monrules[] = {
    /* name        mfact  nmaster scale layout       rotate/reflect                x    y
     * example of a HiDPI laptop monitor:
     { "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 }, */
-	{ "eDP-1",      0.55f, 1,      1.3, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
-	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+    { "eDP-1",    0.55f, 1,      1.3,  &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
+    { NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
 	/* default monitor rule: can be changed but cannot be eliminated; at least one monitor rule must exist */
 };
 
@@ -129,7 +131,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[] 			= { "foot", NULL };
+static const char *termcmd[] 			= { "footclient", NULL };
 static const char *filecmd[] 			= { "yazi", NULL };
 static const char *menucmd[] 			= { "wmenu-run", NULL };
 static const char *brightnessup[]		= { "brightnessctl", "s", "10%+", NULL };
@@ -174,8 +176,8 @@ static const Key keys[] = {
 	{ MODKEY,                               XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
 	{ MODKEY,                               XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY,                               XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_less,                  tagmon,           {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_greater,               tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_semicolon,             tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_colon,                 tagmon,           {.i = WLR_DIRECTION_RIGHT} },
 	{ 0,                                    XKB_KEY_XF86AudioRaiseVolume,  spawn,            {.v = volup} },
 	{ 0,                                    XKB_KEY_XF86AudioLowerVolume,  spawn,            {.v = voldown} },
 	{ 0,                                    XKB_KEY_XF86AudioMute,         spawn,            {.v = mute} },
