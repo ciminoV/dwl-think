@@ -10,11 +10,11 @@ static const int smartgaps                 = 0;  /* 1 means no outer gap when th
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const unsigned int gappih           = 5; /* horiz inner gap between windows */
 static const unsigned int gappiv           = 5; /* vert inner gap between windows */
-static const unsigned int gappoh           = 8; /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov           = 8; /* vert outer gap between windows and screen edge */
+static const unsigned int gappoh           = 7; /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov           = 7; /* vert outer gap between windows and screen edge */
 static const float rootcolor[]             = COLOR(0x222222ff);
-static const float bordercolor[]           = COLOR(0x444444ff);
-static const float focuscolor[]            = COLOR(0x005577ff);
+static const float bordercolor[]           = COLOR(0x2e3440ff);
+static const float focuscolor[]            = COLOR(0x88c0d0ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You can also use glsl colors */
