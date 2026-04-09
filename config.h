@@ -38,6 +38,7 @@ static const Rule rules[] = {
 	{ "pavucontrol",      NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
 	{ "mpv",              NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
 	{ "firefox",          NULL,       1 << 1,       0,           -1 }, /* Start on only tag 2 */
+	{ "brave",            NULL,       1 << 1,       0,           -1 }, /* Start on only tag 2 */
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
@@ -132,8 +133,9 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* commands */
 static const char *termcmd[] 			= { "footclient", NULL };
-static const char *filecmd[] 			= { "yazi", NULL };
+static const char *filecmd[] 			= { "footclient", "sh", "-c", "vifm", NULL };
 static const char *menucmd[] 			= { "wmenu-run", NULL };
+static const char *browsercmd[]			= { "brave", NULL };
 static const char *brightnessup[]		= { "brightnessctl", "s", "10%+", NULL };
 static const char *brightnessdown[]	  	= { "brightnessctl", "s", "10%-", NULL };
 static const char *volup[]			= { "/home/cimino/.local/bin/volume", "--inc", NULL };
@@ -147,6 +149,7 @@ static const Key keys[] = {
 	{ MODKEY,                               XKB_KEY_p,                     spawn,            {.v = menucmd} },
 	{ MODKEY,                               XKB_KEY_Return,                spawn,            {.v = termcmd} },
 	{ MODKEY,                               XKB_KEY_BackSpace,             spawn,            {.v = filecmd} },
+	{ MODKEY,                               XKB_KEY_w,                     spawn,            {.v = browsercmd} },
 	{ MODKEY,                               XKB_KEY_b,                     togglebar,        {0} },
 	{ MODKEY,                               XKB_KEY_j,                     focusstack,       {.i = +1} },
 	{ MODKEY,                               XKB_KEY_k,                     focusstack,       {.i = -1} },
@@ -172,8 +175,9 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_a,                     killallclient,    {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_q,                     quit,             {0} },
 	{ MODKEY,                               XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
+	{ MODKEY,                               XKB_KEY_f,                     setlayout,        {.v = &layouts[2]} }, // Monocle layout
 	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_f,                     togglefloating,   {0} },
-	{ MODKEY,                               XKB_KEY_f,                     togglefullscreen, {0} },
+	{ MODKEY|WLR_MODIFIER_CTRL,             XKB_KEY_f,                     togglefullscreen, {0} },
 	{ MODKEY,                               XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
 	{ MODKEY,                               XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY,                               XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
