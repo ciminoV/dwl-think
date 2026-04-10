@@ -148,6 +148,9 @@ static const char *togglespotify[]		= { "/home/cimino/.local/bin/mediatoggle", "
 static const char *togglebrowser[]		= { "/home/cimino/.local/bin/mediatoggle", "brave", NULL };
 static const char *nextspotify[]		= { "playerctl",  "--player=spotify", "next", NULL };
 static const char *prevspotify[]		= { "playerctl",  "--player=spotify", "previous", NULL };
+static const char *syspowerprompt[]		= { "/home/cimino/.local/bin/syspower", NULL };
+static const char *screenshotfull[]		= { "/home/cimino/.local/bin/wshot", "--fullscreen", NULL };
+static const char *screenshotarea[]		= { "/home/cimino/.local/bin/wshot", "--area", NULL };
 
 /* named scratchpads - First arg only serves to match against key in rules */
 static const char *spotifycmd[] = { "s", "spotify-launcher", NULL };
@@ -162,21 +165,48 @@ static const Key keys[] = {
 	{ MODKEY,                               -1,        XKB_KEY_Return,                spawn,            {.v = termcmd} },
 	{ MODKEY,                               -1,        XKB_KEY_BackSpace,             spawn,            {.v = filecmd} },
 	{ MODKEY,                               -1,        XKB_KEY_w,                     spawn,            {.v = browsercmd} },
+	{ 0,                                    -1,        XKB_KEY_XF86Favorites,         togglescratch,    {.v = spotifycmd } },
 
-	/* Window manager */
+	/* dwl */
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_q,                     quit,             {0} },
+	{ MODKEY,                               -1,        XKB_KEY_q,                     killclient,       {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_a,                     killallclient,    {0} },
 	{ MODKEY,                               -1,        XKB_KEY_b,                     togglebar,        {0} },
+
+	/* Prompts */
+	{ MODKEY,                               -1,        XKB_KEY_Escape,                spawn,            {.v = syspowerprompt} },
+
+	/* Layouts */
+	{ MODKEY,                               -1,        XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
+	{ MODKEY,                               -1,        XKB_KEY_f,                     setlayout,        {.v = &layouts[2]} }, // Monocle layout
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_f,                     togglefloating,   {0} },
+	{ MODKEY|WLR_MODIFIER_CTRL,             -1,        XKB_KEY_f,                     togglefullscreen, {0} },
+	{ MODKEY,                               -1,        XKB_KEY_i,                     incnmaster,       {.i = +1} },
+	{ MODKEY,                               -1,        XKB_KEY_d,                     incnmaster,       {.i = -1} },
+
+	/* Navigate windows */
 	{ MODKEY,                               -1,        XKB_KEY_j,                     focusstack,       {.i = +1} },
 	{ MODKEY,                               -1,        XKB_KEY_k,                     focusstack,       {.i = -1} },
 	{ MODKEY,                               -1,        XKB_KEY_m,                     focusmaster,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_j,                     movestack,        {.i = +1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_k,                     movestack,        {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_m,                     zoom,             {0} }, // Swap current window and master
-	{ MODKEY,                               -1,        XKB_KEY_i,                     incnmaster,       {.i = +1} },
-	{ MODKEY,                               -1,        XKB_KEY_d,                     incnmaster,       {.i = -1} },
+														   //
+	/* Navigate tags */
 	{ MODKEY,                               -1,        XKB_KEY_Left,                  rotatetags,       {.i = VIEW_L} },
 	{ MODKEY,                               -1,        XKB_KEY_Right,                 rotatetags,       {.i = VIEW_R} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_Left,                  rotatetags,       {.i = SHIFT_L} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_Right,                 rotatetags,       {.i = SHIFT_R} },
+	{ MODKEY,                               -1,        XKB_KEY_Tab,                   view,             {0} }, // Rotate through last two tags
+	{ MODKEY,                               -1,        XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
+															  //
+	/* Navigate monitors */
+	{ MODKEY,                               -1,        XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                               -1,        XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_semicolon,             tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_colon,                 tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+
+	/* Resize windows and gaps*/
 	{ MODKEY,                               -1,        XKB_KEY_h,                     setmfact,         {.f = -0.05f} },
 	{ MODKEY,                               -1,        XKB_KEY_l,                     setmfact,         {.f = +0.05f} },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   -1,        XKB_KEY_k,                     incogaps,         {.i = +1 } },
@@ -184,30 +214,18 @@ static const Key keys[] = {
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   -1,        XKB_KEY_h,                     incigaps,         {.i = +1 } },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   -1,        XKB_KEY_l,                     incigaps,         {.i = -1 } },
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,   -1,        XKB_KEY_d,                     defaultgaps,      {0} },
-	{ MODKEY,                               -1,        XKB_KEY_Tab,                   view,             {0} }, // Rotate through last two tags
-	{ MODKEY,                               -1,        XKB_KEY_q,                     killclient,       {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_a,                     killallclient,    {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_q,                     quit,             {0} },
-	{ MODKEY,                               -1,        XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
-	{ MODKEY,                               -1,        XKB_KEY_f,                     setlayout,        {.v = &layouts[2]} }, // Monocle layout
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_f,                     togglefloating,   {0} },
-	{ MODKEY|WLR_MODIFIER_CTRL,             -1,        XKB_KEY_f,                     togglefullscreen, {0} },
-	{ MODKEY,                               -1,        XKB_KEY_0,                     view,             {.ui = ~0} }, // Show all windows in current tag
-	{ MODKEY,                               -1,        XKB_KEY_comma,                 focusmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                               -1,        XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_semicolon,             tagmon,           {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_colon,                 tagmon,           {.i = WLR_DIRECTION_RIGHT} },
 
-	/* Multimedia keys (light, volume and screen) */
-	{ 0,                                    -1,        XKB_KEY_XF86Favorites,           togglescratch,    {.v = spotifycmd } },
+	/* Multimedia */
 	{ 0,                                    -1,        XKB_KEY_XF86AudioRaiseVolume,    spawn,            {.v = volup} },
 	{ 0,                                    -1,        XKB_KEY_XF86AudioLowerVolume,    spawn,            {.v = voldown} },
 	{ 0,                                    -1,        XKB_KEY_XF86AudioMute,           spawn,            {.v = mute} },
 	{ 0,                                    -1,        XKB_KEY_XF86AudioMicMute,        spawn,            {.v = mutemic} },
 	{ 0,                                    -1,        XKB_KEY_XF86MonBrightnessUp,     spawn,            {.v = brightnessup} },
 	{ 0,                                    -1,        XKB_KEY_XF86MonBrightnessDown,   spawn,            {.v = brightnessdown} },
+	{ 0,                                    -1,        XKB_KEY_Print,                   spawn,            {.v = screenshotfull} },
+	{ MODKEY,                               -1,        XKB_KEY_Print,                   spawn,            {.v = screenshotarea} },
 
-	/* Multimedia controls (spotify and browser) */
+	/* Controls for multimedia */
         { 0,                                    -1,        XKB_KEY_XF86AudioPlay,           spawn,            {.v = togglespotify} },
         { 0,                                    -1,        XKB_KEY_XF86AudioNext,           spawn,            {.v = nextspotify} },
         { 0,                                    -1,        XKB_KEY_XF86AudioPrev,           spawn,            {.v = prevspotify} } ,
