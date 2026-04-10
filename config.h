@@ -151,6 +151,8 @@ static const char *prevspotify[]		= { "playerctl",  "--player=spotify", "previou
 static const char *syspowerprompt[]		= { "/home/cimino/.local/bin/syspower", NULL };
 static const char *screenshotfull[]		= { "/home/cimino/.local/bin/wshot", "--fullscreen", NULL };
 static const char *screenshotarea[]		= { "/home/cimino/.local/bin/wshot", "--area", NULL };
+static const char *wmount[]			= { "/home/cimino/.local/bin/wmount", NULL };
+static const char *wumount[]			= { "/home/cimino/.local/bin/wumount", NULL };
 
 /* named scratchpads - First arg only serves to match against key in rules */
 static const char *spotifycmd[] = { "s", "spotify-launcher", NULL };
@@ -175,14 +177,14 @@ static const Key keys[] = {
 
 	/* Prompts */
 	{ MODKEY,                               -1,        XKB_KEY_Escape,                spawn,            {.v = syspowerprompt} },
+	{ MODKEY,                               XKB_KEY_d, XKB_KEY_m,                     spawn,            {.v = wmount} },
+	{ MODKEY,                               XKB_KEY_d, XKB_KEY_u,                     spawn,            {.v = wumount} },
 
 	/* Layouts */
-	{ MODKEY,                               -1,        XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile layout
-	{ MODKEY,                               -1,        XKB_KEY_f,                     setlayout,        {.v = &layouts[2]} }, // Monocle layout
+	{ MODKEY,                               -1,        XKB_KEY_t,                     setlayout,        {.v = &layouts[0]} }, // Tile
+	{ MODKEY,                               -1,        XKB_KEY_f,                     setlayout,        {.v = &layouts[2]} }, // Monocle
 	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_f,                     togglefloating,   {0} },
 	{ MODKEY|WLR_MODIFIER_CTRL,             -1,        XKB_KEY_f,                     togglefullscreen, {0} },
-	{ MODKEY,                               -1,        XKB_KEY_i,                     incnmaster,       {.i = +1} },
-	{ MODKEY,                               -1,        XKB_KEY_d,                     incnmaster,       {.i = -1} },
 
 	/* Navigate windows */
 	{ MODKEY,                               -1,        XKB_KEY_j,                     focusstack,       {.i = +1} },
