@@ -34,11 +34,12 @@ enum {
 static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
-	/* app_id             title       tags mask     isfloating   monitor */
-	{ "pavucontrol",      NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "mpv",              NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox",          NULL,       1 << 1,       0,           -1 }, /* Start on only tag 2 */
-	{ "brave",            NULL,       1 << 1,       0,           -1 }, /* Start on only tag 2 */
+	/* app_id             title         tags mask     isfloating   monitor scratchkey */
+	{ "pavucontrol",      NULL,         0,            1,           -1,     0   }, /* Start on currently visible tags floating, not tiled */
+	{ "mpv",              NULL,         0,            1,           -1,     0   }, /* Start on currently visible tags floating, not tiled */
+	{ "firefox",          NULL,         1 << 1,       0,           -1,     0   }, /* Start on only tag 2 */
+	{ "brave",            NULL,         1 << 1,       0,           -1,     0   }, /* Start on only tag 2 */
+	{ "spotify",          NULL,         0,            1,           -1,     's' }, /* Start on named scratchpad */
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
@@ -143,6 +144,10 @@ static const char *voldown[]			= { "/home/cimino/.local/bin/volume", "--dec", NU
 static const char *mute[]			= { "/home/cimino/.local/bin/volume", "--toggle", NULL };
 static const char *mutemic[]			= { "/home/cimino/.local/bin/volume", "--toggle-mic", NULL };
 
+/* named scratchpads - First arg only serves to match against key in rules */
+static const char *spotifycmd[] = { "s", "spotify-launcher", NULL };
+
+
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> quotedbl, etc. */
 	/* modifier                  		key                            function          argument */
@@ -183,6 +188,7 @@ static const Key keys[] = {
 	{ MODKEY,                               XKB_KEY_period,                focusmon,         {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_semicolon,             tagmon,           {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT,            XKB_KEY_colon,                 tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ 0,                                    XKB_KEY_XF86Favorites,         togglescratch,    {.v = spotifycmd } },
 	{ 0,                                    XKB_KEY_XF86AudioRaiseVolume,  spawn,            {.v = volup} },
 	{ 0,                                    XKB_KEY_XF86AudioLowerVolume,  spawn,            {.v = voldown} },
 	{ 0,                                    XKB_KEY_XF86AudioMute,         spawn,            {.v = mute} },
