@@ -243,6 +243,10 @@ typedef struct {
 	uint32_t tags;
 	int isfloating;
 	int monitor;
+	int x;
+	int y;
+	float w;
+	float h;
 	const char scratchkey;
 } Rule;
 
@@ -534,6 +538,11 @@ applyrules(Client *c)
 	int i;
 	const Rule *r;
 	Monitor *mon = selmon, *m;
+	int newwidth;
+	int newheight;
+	int newx;
+	int newy;
+	int apply_resize = 0;
 
 	appid = client_get_appid(c);
 	title = client_get_title(c);
@@ -549,12 +558,35 @@ applyrules(Client *c)
 			wl_list_for_each(m, &mons, link) {
 				if (r->monitor == i++)
 					mon = m;
+				if (c->isfloating || !mon->lt[mon->sellt]->arrange) {
+					/* client is floating or in floating layout */
+					struct wlr_box b = respect_monitor_reserved_area ? mon->w : mon->m;
+					newwidth  = (int)round((r->w >= 0) ? (r->w <= 1 ? b.width  * r->w       : r->w)       : c->geom.width);
+					newheight = (int)round((r->h >= 0) ? (r->h <= 1 ? b.height * r->h       : r->h)       : c->geom.height);
+
+					newx = (r->x < 0)
+						? b.x + (b.width - newwidth) / 2
+						: (int)round((r->x >= 0) ? (r->x <= 1 ? b.width * r->x + b.x : r->x + b.x) : c->geom.x);
+
+					newy = (r->y < 0)
+						? b.y + (b.height - newheight) / 2
+						: (int)round((r->y >= 0) ? (r->y <= 1 ? b.height * r->y + b.y : r->y + b.y) : c->geom.y);
+					apply_resize = 1;
+				}
 			}
 		}
 	}
 
 	c->isfloating |= client_is_float_type(c);
 	setmon(c, mon, newtags);
+	if (apply_resize) {
+		resize(c, (struct wlr_box){
+				.x = newx,
+				.y = newy,
+				.width = newwidth,
+				.height = newheight,
+		}, 1);
+	}
 }
 
 void

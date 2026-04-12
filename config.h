@@ -18,6 +18,7 @@ static const float focuscolor[]            = COLOR(0x88c0d0ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You can also use glsl colors */
+static const int respect_monitor_reserved_area = 1;  /* 1 to monitor center while respecting the monitor's reserved area, 0 to monitor center */
 
 enum {
     VIEW_L = -1,
