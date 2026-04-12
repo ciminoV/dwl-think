@@ -35,13 +35,15 @@ enum {
 static int log_level = WLR_ERROR;
 
 static const Rule rules[] = {
-	/* app_id             title         tags mask     isfloating   monitor scratchkey */
-	{ "pavucontrol",      NULL,         0,            1,           -1,     0   }, /* Start on currently visible tags floating, not tiled */
-	{ "pulsemixer",       NULL,         0,            1,           -1,     0   }, /* Start on currently visible tags floating, not tiled */
-	{ "mpv",              NULL,         0,            1,           -1,     0   }, /* Start on currently visible tags floating, not tiled */
-	{ "firefox",          NULL,         1 << 1,       0,           -1,     0   }, /* Start on only tag 2 */
-	{ "brave",            NULL,         1 << 1,       0,           -1,     0   }, /* Start on only tag 2 */
-	{ "spotify",          NULL,         0,            1,           -1,     's' }, /* Start on named scratchpad */
+	/* app_id         title     tags mask   isfloating  monitor  x    y    width    height  scratchkey */
+	{ "pavucontrol",  NULL,     0,          1,          -1,      -1,  -1,  -1,      -1,     0   }, /* current visible tags floating */
+	{ "mpv",          NULL,     0,          1,          -1,      -1,  -1,  -1,      -1,     0   }, /* current visible tags floating */
+	{ "firefox",      NULL,     1 << 1,     0,          -1,      -1,  -1,  -1,      -1,     0   }, /* on tag 2 tiled */
+	{ "brave",        NULL,     1 << 1,     0,          -1,      -1,  -1,  -1,      -1,     0   }, /* on tag 2 tiled */
+	{ "spotify",      NULL,     0,          1,          -1,      -1,  -1,  -1,      -1,     's' }, /* on named scratchpad floating */
+	{ NULL,           "myCal",  0,          1,          -1,      -1,  -1,  0.50,    0.85,   0   }, /* current visible tags floating */
+	{ NULL,           "htop",   0,          1,          -1,      -1,  -1,  0.90,    0.90,   0   }, /* current visible tags floating */
+	{ NULL,           "nmtui",  0,          1,          -1,      -1,  -1,  -1,      -1,     0   }, /* current visible tags floating */
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
@@ -139,8 +141,8 @@ static const char *termcmd[] 			= { "footclient", NULL };
 static const char *filecmd[] 			= { "footclient", "sh", "-c", "vifm", NULL };
 static const char *menucmd[] 			= { "wmenu-run", NULL };
 static const char *browsercmd[]			= { "brave", NULL };
-static const char *brightnessup[]		= { "brightnessctl", "s", "10%+", NULL };
-static const char *brightnessdown[]	  	= { "brightnessctl", "s", "10%-", NULL };
+static const char *brightnessup[]		= { "/home/cimino/.local/bin/wlightlevel", "10%+", NULL };
+static const char *brightnessdown[]	  	= { "/home/cimino/.local/bin/wlightlevel", "10%-", NULL };
 static const char *volup[]			= { "/home/cimino/.local/bin/volume", "--inc", NULL };
 static const char *voldown[]			= { "/home/cimino/.local/bin/volume", "--dec", NULL };
 static const char *mute[]			= { "/home/cimino/.local/bin/volume", "--toggle", NULL };
