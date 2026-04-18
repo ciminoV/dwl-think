@@ -315,6 +315,8 @@ static void dwl_ipc_output_set_client_tags(struct wl_client *client, struct wl_r
 static void dwl_ipc_output_set_layout(struct wl_client *client, struct wl_resource *resource, uint32_t index);
 static void dwl_ipc_output_set_tags(struct wl_client *client, struct wl_resource *resource, uint32_t tagmask, uint32_t toggle_tagset);
 static void dwl_ipc_output_release(struct wl_client *client, struct wl_resource *resource);
+static void dwl_ipc_output_kill_all_clients(struct wl_client *client, struct wl_resource *resource);
+static void dwl_ipc_output_quit(struct wl_client *client, struct wl_resource *resource);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
@@ -458,7 +460,15 @@ static struct wl_list mons;
 static Monitor *selmon;
 
 static struct zdwl_ipc_manager_v2_interface dwl_manager_implementation = {.release = dwl_ipc_manager_release, .get_output = dwl_ipc_manager_get_output};
-static struct zdwl_ipc_output_v2_interface dwl_output_implementation = {.release = dwl_ipc_output_release, .set_tags = dwl_ipc_output_set_tags, .set_layout = dwl_ipc_output_set_layout, .set_client_tags = dwl_ipc_output_set_client_tags};
+static struct zdwl_ipc_output_v2_interface dwl_output_implementation = {
+	.release = dwl_ipc_output_release,
+	.set_tags = dwl_ipc_output_set_tags,
+	.set_client_tags = dwl_ipc_output_set_client_tags,
+	.set_layout = dwl_ipc_output_set_layout,
+	.kill_all_clients = dwl_ipc_output_kill_all_clients,
+	.quit = dwl_ipc_output_quit,
+
+};
 
 static int enablegaps = 1;   /* enables gaps, used by togglegaps */
 
@@ -1787,6 +1797,16 @@ dwl_ipc_output_release(struct wl_client *client, struct wl_resource *resource)
 	wl_resource_destroy(resource);
 }
 
+void
+dwl_ipc_output_kill_all_clients(struct wl_client *client, struct wl_resource *resource)
+{
+	killallclient(NULL);
+}
+
+void
+dwl_ipc_output_quit(struct wl_client *client, struct wl_resource *resource) {
+	quit(&(Arg){0});
+}
 
 void
 focusclient(Client *c, int lift)

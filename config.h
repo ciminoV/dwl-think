@@ -141,6 +141,8 @@ static const char *termcmd[] 			= { "footclient", NULL };
 static const char *filecmd[] 			= { "footclient", "sh", "-c", "vifm", NULL };
 static const char *menucmd[] 			= { "wmenu-run", NULL };
 static const char *browsercmd[]			= { "brave", NULL };
+static const char *killallclientcmd[]		= { "/home/cimino/.local/bin/confirmprompt", "Close all windows?", NULL };
+static const char *quitcmd[]			= { "/home/cimino/.local/bin/confirmprompt", "Quit?", NULL };
 static const char *brightnessup[]		= { "/home/cimino/.local/bin/wlightlevel", "10%+", NULL };
 static const char *brightnessdown[]	  	= { "/home/cimino/.local/bin/wlightlevel", "10%-", NULL };
 static const char *volup[]			= { "/home/cimino/.local/bin/volume", "--inc", NULL };
@@ -173,9 +175,9 @@ static const Key keys[] = {
 	{ 0,                                    -1,        XKB_KEY_XF86Favorites,         togglescratch,    {.v = spotifycmd } },
 
 	/* dwl */
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_q,                     quit,             {0} },
 	{ MODKEY,                               -1,        XKB_KEY_q,                     killclient,       {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_a,                     killallclient,    {0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_q,                     spawn,            {.v = quitcmd} },
+	{ MODKEY|WLR_MODIFIER_SHIFT,            -1,        XKB_KEY_a,                     spawn,            {.v = killallclientcmd} },
 	{ MODKEY,                               -1,        XKB_KEY_b,                     togglebar,        {0} },
 
 	/* Prompts */
